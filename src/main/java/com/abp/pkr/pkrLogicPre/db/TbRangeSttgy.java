@@ -40,6 +40,17 @@ public class TbRangeSttgy {
 	@Column(name = "vr_sttgy_range")
 	private String vrSttgyRange;
 
+	@Column(name = "vr_sttgy_accion")
+	private String vrSttgyAccion;
+
+	public String getVrSttgyAccion() {
+		return vrSttgyAccion;
+	}
+
+	public void setVrSttgyAccion(String vrSttgyAccion) {
+		this.vrSttgyAccion = vrSttgyAccion;
+	}
+
 	public Integer getNbSttgyIdn() {
 		return nbSttgyIdn;
 	}

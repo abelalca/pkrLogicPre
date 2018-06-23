@@ -1,5 +1,6 @@
 package com.abp.pkr.pkrLogicPre.ngc;
 
+import com.abp.pkr.pkrLogicPre.dto.AccionInfoDto;
 import com.abp.pkr.pkrLogicPre.dto.HandInfoDto;
 
 public interface ProcesarHandNgc {
@@ -9,8 +10,9 @@ public interface ProcesarHandNgc {
 	 *@author abpubuntu
 	 *@date Jun 6, 2018
 	 * @param handInfoDto
+	 * @return 
 	 * @throws Exception
 	 */
-	public void procesarHand(HandInfoDto handInfoDto) throws Exception;	
+	public AccionInfoDto procesarHand(HandInfoDto handInfoDto) throws Exception;	
 
 }

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.abp.pkr.pkrLogicPre.dto.AccionInfoDto;
 import com.abp.pkr.pkrLogicPre.dto.HandInfoDto;
 import com.abp.pkr.pkrLogicPre.ngc.ProcesarHandNgcImpl;
 
@@ -24,16 +25,24 @@ public class ProcesoHandSrv {
 	 * @throws Exception 
 	 */
 	@GetMapping(value="/procesarHand")
-	public void procesarHand(HandInfoDto handInfoDto) throws Exception{
-		procesarHandNgc.procesarHand(handInfoDto);		
+	public AccionInfoDto procesarHand(HandInfoDto handInfoDto) throws Exception{
+		return procesarHandNgc.procesarHand(handInfoDto);		
 	}
 	
 	@GetMapping(value="/procesarHandPrueba")
-	public void procesarHandPrueba() throws Exception{
+	public AccionInfoDto procesarHandPrueba() throws Exception{
 		HandInfoDto h = new HandInfoDto();
+		h.setBtnPos(1);
+		h.setHand("AA");
+		h.setIsActivo(new boolean[]{true,true,true});
+		h.setNumjug(3);
+		h.setPosHero(2);
+		h.setPosicionHero("BU");
+		h.setSillaHero(1);
+		h.setStacksBb(new Double[] {14.0,15.0,16.0});
 		
 		
-		procesarHandNgc.procesarHand(new HandInfoDto());		
+		return procesarHandNgc.procesarHand(h);		
 	}
 	
 }
