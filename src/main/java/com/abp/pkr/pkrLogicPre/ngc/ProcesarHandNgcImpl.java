@@ -83,93 +83,106 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 		String[] tiposPly = obtenerDisctinctTipoPlayers(acciones);
 
 		if (handInfoDto.numJugadores() == 3 && poshero == "BU") {
-			accionInfoDto.setSupVsEffStack(stackEff[2]);
-			accionInfoDto.setSupVsPlayer("SB");
-			accionInfoDto.setInfVsEffStack(stackEff[0]);
-			accionInfoDto.setInfVsPlayer("BB");
+			accionInfoDto.setIzqVsEffStack(stackEff[2]);
+			accionInfoDto.setIzqVsPlayer("SB");
+			accionInfoDto.setDerVsEffStack(stackEff[0]);
+			accionInfoDto.setDerVsPlayer("BB");
 
 			for (String tipplayer : tiposPly) {
-				List<String> arriba = obtenerAccionVsPlayer(acciones, tipplayer, "SB");
-				List<String> abajo = obtenerAccionVsPlayer(acciones, tipplayer, "BB");
+				List<String> izq = obtenerAccionVsPlayer(acciones, tipplayer, "SB");
+				List<String> der = obtenerAccionVsPlayer(acciones, tipplayer, "BB");
 
 				AccionVsPlayer acply = new AccionVsPlayer();
-				acply.setSupQA1(arriba.get(0));
-				acply.setSupQA2(arriba.get(1));
-				acply.setInfQA1(abajo.get(0));
-				acply.setInfQA2(abajo.get(1));
-
+				acply.setIzqQA1(izq.get(0));
+				acply.setIzqQA2(izq.get(1));
+				acply.setIzqQA3(izq.get(2));
+				
+				acply.setDerQA1(der.get(0));
+				acply.setDerQA2(der.get(1));
+				acply.setDerQA3(der.get(2));
+				
 				accVsPly.put(tipplayer, acply);
 			}
 
 		}
 		if (handInfoDto.numJugadores() == 3 && poshero == "SB") {
-			accionInfoDto.setSupVsEffStack(stackEff[0]);
-			accionInfoDto.setSupVsPlayer("BU");
-			accionInfoDto.setInfVsEffStack(stackEff[2]);
-			accionInfoDto.setInfVsPlayer("BB");
+			accionInfoDto.setDerVsEffStack(stackEff[0]);
+			accionInfoDto.setDerVsPlayer("BU");
+			accionInfoDto.setIzqVsEffStack(stackEff[2]);
+			accionInfoDto.setIzqVsPlayer("BB");
 
 			for (String tipplayer : tiposPly) {
-				List<String> arriba = obtenerAccionVsPlayer(acciones, tipplayer, "BU");
-				List<String> abajo = obtenerAccionVsPlayer(acciones, tipplayer, "BB");
+				List<String> der = obtenerAccionVsPlayer(acciones, tipplayer, "BU");
+				List<String> izq = obtenerAccionVsPlayer(acciones, tipplayer, "BB");
 
 				AccionVsPlayer acply = new AccionVsPlayer();
-				acply.setSupQA1(arriba.get(0));
-				acply.setSupQA2(arriba.get(1));
-				acply.setInfQA1(abajo.get(0));
-				acply.setInfQA2(abajo.get(1));
-
+				acply.setIzqQA1(izq.get(0));
+				acply.setIzqQA2(izq.get(1));
+				acply.setIzqQA3(izq.get(2));
+				
+				acply.setDerQA1(der.get(0));
+				acply.setDerQA2(der.get(1));
+				acply.setDerQA3(der.get(2));
+				
 				accVsPly.put(tipplayer, acply);
 			}
 		}
 		if (handInfoDto.numJugadores() == 3 && poshero == "BB") {
-			accionInfoDto.setSupVsEffStack(stackEff[2]);
-			accionInfoDto.setSupVsPlayer("BU");
-			accionInfoDto.setInfVsEffStack(stackEff[0]);
-			accionInfoDto.setInfVsPlayer("SB");
+			accionInfoDto.setIzqVsEffStack(stackEff[2]);
+			accionInfoDto.setIzqVsPlayer("BU");
+			accionInfoDto.setDerVsEffStack(stackEff[0]);
+			accionInfoDto.setDerVsPlayer("SB");
 			
 			for (String tipplayer : tiposPly) {
-				List<String> arriba = obtenerAccionVsPlayer(acciones, tipplayer, "BU");
-				List<String> abajo = obtenerAccionVsPlayer(acciones, tipplayer, "SB");
+				List<String> izq = obtenerAccionVsPlayer(acciones, tipplayer, "BU");
+				List<String> der = obtenerAccionVsPlayer(acciones, tipplayer, "SB");
 				
 				AccionVsPlayer acply = new AccionVsPlayer();
-				acply.setSupQA1(arriba.get(0));
-				acply.setSupQA2(arriba.get(1));
-				acply.setInfQA1(abajo.get(0));
-				acply.setInfQA2(abajo.get(1));
+				acply.setIzqQA1(izq.get(0));
+				acply.setIzqQA2(izq.get(1));
+				acply.setIzqQA3(izq.get(2));
+				
+				acply.setDerQA1(der.get(0));
+				acply.setDerQA2(der.get(1));
+				acply.setDerQA3(der.get(2));
 				
 				accVsPly.put(tipplayer, acply);
 			}
 		}
 
 		if (handInfoDto.numJugadores() == 2 && poshero == "SB") {
-			accionInfoDto.setSupVsEffStack(Collections.max(Arrays.asList(stackEff)));
-			accionInfoDto.setSupVsPlayer("BB");
-			accionInfoDto.setInfVsEffStack(null);
-			accionInfoDto.setInfVsPlayer(null);
+			accionInfoDto.setIzqVsEffStack(Collections.max(Arrays.asList(stackEff)));
+			accionInfoDto.setIzqVsPlayer("BB");
+			accionInfoDto.setDerVsEffStack(null);
+			accionInfoDto.setDerVsPlayer(null);
 			
 			
 			for (String tipplayer : tiposPly) {
-				List<String> arriba = obtenerAccionVsPlayer(acciones, tipplayer, "BB");
+				List<String> izq = obtenerAccionVsPlayer(acciones, tipplayer, "BB");
 				
 				AccionVsPlayer acply = new AccionVsPlayer();
-				acply.setSupQA1(arriba.get(0));
-				acply.setSupQA2(arriba.get(1));
+				acply.setIzqQA1(izq.get(0));
+				acply.setIzqQA2(izq.get(1));
+				acply.setIzqQA3(izq.get(2));
+				
 				
 				accVsPly.put(tipplayer, acply);
 			}
 		}
 		if (handInfoDto.numJugadores() == 2 && poshero == "BB") {
-			accionInfoDto.setSupVsEffStack(Collections.max(Arrays.asList(stackEff)));
-			accionInfoDto.setSupVsPlayer("SB");
-			accionInfoDto.setInfVsEffStack(null);
-			accionInfoDto.setInfVsPlayer(null);
+			accionInfoDto.setIzqVsEffStack(Collections.max(Arrays.asList(stackEff)));
+			accionInfoDto.setIzqVsPlayer("SB");
+			accionInfoDto.setDerVsEffStack(null);
+			accionInfoDto.setDerVsPlayer(null);
 			
 			for (String tipplayer : tiposPly) {
-				List<String> arriba = obtenerAccionVsPlayer(acciones, tipplayer, "SB");
+				List<String> izq = obtenerAccionVsPlayer(acciones, tipplayer, "SB");
 				
 				AccionVsPlayer acply = new AccionVsPlayer();
-				acply.setSupQA1(arriba.get(0));
-				acply.setSupQA2(arriba.get(1));
+				acply.setIzqQA1(izq.get(0));
+				acply.setIzqQA2(izq.get(1));
+				acply.setIzqQA3(izq.get(2));
+				
 				
 				accVsPly.put(tipplayer, acply);
 			}
