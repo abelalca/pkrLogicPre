@@ -1,5 +1,7 @@
 package com.abp.pkr.pkrLogicPre.db;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tb_range_sttgy")
+@Table(name = "tb_spin_range_sttgy")
 public class TbRangeSttgy {
 
 	@Id
@@ -22,8 +24,8 @@ public class TbRangeSttgy {
 	@Column(name = "vr_sttgy_poshero")
 	private String vrSttgyPoshero;
 
-	@Column(name = "nb_sttgy_pushfold")
-	private Integer nbSttgyPushfold;
+	@Column(name = "vr_sttgy_tipoaccion")
+	private String vrSttgyTipoaccion;
 
 	@Column(name = "nb_sttgy_stackmin")
 	private Double nbSttgyStackmin;
@@ -39,6 +41,15 @@ public class TbRangeSttgy {
 
 	@Column(name = "vr_sttgy_range")
 	private String vrSttgyRange;
+
+	@Column(name = "vr_sttgy_strategy")
+	private String vrSttgyStrategy;
+
+	@Column(name = "vr_aut_usuario")
+	private String vrAutUsuario;
+
+	@Column(name = "dt_aut_fechareg")
+	private Date dtAutFechareg;
 
 	@Column(name = "vr_sttgy_accion")
 	private String vrSttgyAccion;
@@ -75,12 +86,12 @@ public class TbRangeSttgy {
 		this.vrSttgyPoshero = vrSttgyPoshero;
 	}
 
-	public Integer getNbSttgyPushfold() {
-		return nbSttgyPushfold;
+	public String getVrSttgyTipoaccion() {
+		return vrSttgyTipoaccion;
 	}
 
-	public void setNbSttgyPushfold(Integer nbSttgyPushfold) {
-		this.nbSttgyPushfold = nbSttgyPushfold;
+	public void setVrSttgyTipoaccion(String vrSttgyTipoaccion) {
+		this.vrSttgyTipoaccion = vrSttgyTipoaccion;
 	}
 
 	public Double getNbSttgyStackmin() {
@@ -121,6 +132,30 @@ public class TbRangeSttgy {
 
 	public void setVrSttgyRange(String vrSttgyRange) {
 		this.vrSttgyRange = vrSttgyRange;
+	}
+
+	public String getVrSttgyStrategy() {
+		return vrSttgyStrategy;
+	}
+
+	public void setVrSttgyStrategy(String vrSttgyStrategy) {
+		this.vrSttgyStrategy = vrSttgyStrategy;
+	}
+
+	public String getVrAutUsuario() {
+		return vrAutUsuario;
+	}
+
+	public void setVrAutUsuario(String vrAutUsuario) {
+		this.vrAutUsuario = vrAutUsuario;
+	}
+
+	public Date getDtAutFechareg() {
+		return dtAutFechareg;
+	}
+
+	public void setDtAutFechareg(Date dtAutFechareg) {
+		this.dtAutFechareg = dtAutFechareg;
 	}
 
 }

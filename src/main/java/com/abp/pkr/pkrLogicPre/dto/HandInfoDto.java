@@ -19,8 +19,27 @@ public class HandInfoDto {
 	private boolean[] isActivo;
 	private Integer numjug;
 
+	private String usuario;
+	private String estrategia;
+
 	// tiempo de respuesta del servicio
 	private Long tiempoRest;
+
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public String getEstrategia() {
+		return estrategia;
+	}
+
+	public void setEstrategia(String estrategia) {
+		this.estrategia = estrategia;
+	}
 
 	public int getSillaHero() {
 		return sillaHero;
@@ -191,9 +210,9 @@ public class HandInfoDto {
 				// hero estaria en pos 1 del array
 				stackEff[1] = (double) 0;
 
-				stackEff[0] = this.stacksBb[1];
-				if (this.stacksBb[2] <= this.stacksBb[1]) {
-					stackEff[0] = this.stacksBb[2];
+				stackEff[0] = this.stacksBb[0];
+				if (this.stacksBb[1] <= this.stacksBb[0]) {
+					stackEff[0] = this.stacksBb[1];
 				}
 			}
 		}

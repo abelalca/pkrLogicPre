@@ -12,7 +12,7 @@ import com.abp.pkr.pkrLogicPre.db.TbRangeSttgy;
 public interface RangeSttgyRepositoryI extends CrudRepository<TbRangeSttgy, Long> {
 	
 	
-	List<TbRangeSttgy> findByNbSttgyNumjugAndVrSttgyPosheroAndVrSttgyVsPlayerAndVrSttgyRangeContainingAndNbSttgyStackminLessThanAndNbSttgyStackmaxGreaterThanEqual(Integer NbSttgyNumjug, String vrSttgyPoshero, String vrSttgyVsPlayer, String hand, Double NbSttgyStackmin, Double NbSttgyStackmax);
+	List<TbRangeSttgy> findByNbSttgyNumjugAndVrAutUsuarioAndVrSttgyStrategyAndVrSttgyPosheroAndVrSttgyVsPlayerAndVrSttgyRangeContainingAndNbSttgyStackminLessThanAndNbSttgyStackmaxGreaterThanEqual(Integer NbSttgyNumjug, String vrAutUsuario, String vrSttgyStrategy, String vrSttgyPoshero, String vrSttgyVsPlayer, String hand, Double NbSttgyStackmin, Double NbSttgyStackmax);
 //	
 //	List<TbRangeSttgy> obtenerRango(Integer numjug, String poshero, Double stack);
 	
