@@ -9,6 +9,7 @@ import org.apache.commons.lang.ArrayUtils;
 public class HandInfoDto {
 
 	private Integer btnPos;
+	// que tan alejado esta hero de la BB, BB=0, BU=2
 	private Integer posHero;
 	private String posicionHero;
 
