@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +68,7 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 		}
 		log.debug("Obteniendo acciones a jugar, numero acciones consultadas: " + acciones.size());
 
-		// Armamos el objeto a retornar por el servicio
+
 		AccionInfoDto accionInfoDto = obtenerAcciones(handInfoDto, stackEff, acciones);
 		log.debug("Retornando Objeto de Acciones");
 
@@ -129,6 +130,14 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 
 		Map<String, AccionVsPlayer> accVsPly = new HashMap<>();
 		String[] tiposPly = obtenerDisctinctTipoPlayers(acciones);
+		
+		// es porque no trajo ninguna accion
+		if(tiposPly.length == 0) {
+			accionInfoDto.setDefAccion("F");
+			return accionInfoDto;
+		}
+		
+		
 
 		if (handInfoDto.numJugadores() == 3 && poshero == "BU") {
 			accionInfoDto.setIzqVsEffStack(stackEff[2]);
@@ -212,7 +221,7 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 
 		}
 
-		if (handInfoDto.numJugadores() == 2 && poshero == "BU") {
+		if (handInfoDto.numJugadores() == 2 && poshero == "SB") {
 			if (handInfoDto.getIsActivo()[0]) {
 				accionInfoDto.setDerVsEffStack(Collections.max(Arrays.asList(stackEff)));
 				accionInfoDto.setDerVsPlayer("BB");
@@ -239,29 +248,29 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 
 				accVsPly.put(tipplayer, acply);
 			}
-			
+
 			String accIzqDef = accVsPly.get("DEF").getIzqQA1();
 			String accDerDef = accVsPly.get("DEF").getDerQA1();
-			
+
 			if (handInfoDto.getIsActivo()[0]) {
-				accionInfoDto.setDefAccion(accDerDef.substring(0, 1));					
-			}else {
-				accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));		
+				accionInfoDto.setDefAccion(accDerDef.substring(0, 1));
+			} else {
+				accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));
 			}
 		}
-		
+
 		if (handInfoDto.numJugadores() == 2 && poshero == "BB") {
 			if (handInfoDto.getIsActivo()[0]) {
 				accionInfoDto.setDerVsEffStack(Collections.max(Arrays.asList(stackEff)));
-				accionInfoDto.setDerVsPlayer("BU");
+				accionInfoDto.setDerVsPlayer("SB");
 			}
 			if (handInfoDto.getIsActivo()[2]) {
 				accionInfoDto.setIzqVsEffStack(Collections.max(Arrays.asList(stackEff)));
-				accionInfoDto.setIzqVsPlayer("BU");
+				accionInfoDto.setIzqVsPlayer("SB");
 			}
 
 			for (String tipplayer : tiposPly) {
-				List<String> lado = obtenerAccionVsPlayer(acciones, tipplayer, "BU");
+				List<String> lado = obtenerAccionVsPlayer(acciones, tipplayer, "SB");
 
 				AccionVsPlayer acply = new AccionVsPlayer();
 				if (handInfoDto.getIsActivo()[0]) {
@@ -277,14 +286,14 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 
 				accVsPly.put(tipplayer, acply);
 			}
-			
+
 			String accIzqDef = accVsPly.get("DEF").getIzqQA1();
 			String accDerDef = accVsPly.get("DEF").getDerQA1();
-			
+
 			if (handInfoDto.getIsActivo()[0]) {
-				accionInfoDto.setDefAccion(accDerDef.substring(0, 1));					
-			}else {
-				accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));		
+				accionInfoDto.setDefAccion(accDerDef.substring(0, 1));
+			} else {
+				accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));
 			}
 		}
 
@@ -360,12 +369,12 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 
 		if (vsPlayers.length == 2) {
 			if (handInfoDto.getBtnPos() == 0) {
-				vsPlayers[0] = "BU";
+				vsPlayers[0] = "SB";
 				vsPlayers[1] = "BB";
 			}
 			if (handInfoDto.getBtnPos() == 1) {
 				vsPlayers[0] = "BB";
-				vsPlayers[1] = "BU";
+				vsPlayers[1] = "SB";
 			}
 		}
 
