@@ -68,7 +68,6 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 		}
 		log.debug("Obteniendo acciones a jugar, numero acciones consultadas: " + acciones.size());
 
-
 		AccionInfoDto accionInfoDto = obtenerAcciones(handInfoDto, stackEff, acciones);
 		log.debug("Retornando Objeto de Acciones");
 
@@ -130,14 +129,12 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 
 		Map<String, AccionVsPlayer> accVsPly = new HashMap<>();
 		String[] tiposPly = obtenerDisctinctTipoPlayers(acciones);
-		
+
 		// es porque no trajo ninguna accion
-		if(tiposPly.length == 0) {
+		if (tiposPly.length == 0) {
 			accionInfoDto.setDefAccion("F");
 			return accionInfoDto;
 		}
-		
-		
 
 		if (handInfoDto.numJugadores() == 3 && poshero == "BU") {
 			accionInfoDto.setIzqVsEffStack(stackEff[2]);
@@ -162,13 +159,20 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 
 			}
 
-			String accIzqDef = accVsPly.get("DEF").getIzqQA1();
-			String accDerDef = accVsPly.get("DEF").getDerQA1();
+			try {
+				String accIzqDef = (accVsPly.get("DEF").getIzqQA1() != null
+						&& accVsPly.get("DEF").getIzqQA1().isEmpty()) ? accVsPly.get("DEF").getIzqQA3()
+								: accVsPly.get("DEF").getIzqQA1();
+				String accDerDef = (accVsPly.get("DEF").getDerQA1() != null
+						&& accVsPly.get("DEF").getDerQA1().isEmpty()) ? accVsPly.get("DEF").getDerQA3()
+								: accVsPly.get("DEF").getDerQA1();
 
-			if (stackEff[2] > stackEff[0]) {
-				accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));
-			} else {
-				accionInfoDto.setDefAccion(accDerDef.substring(0, 1));
+				if (stackEff[2] > stackEff[0]) {
+					accionInfoDto.setDefAccion(accDerDef.substring(0, 1));
+				} else {
+					accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));
+				}
+			} catch (Exception e) {
 			}
 
 		}
@@ -194,8 +198,14 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 				accVsPly.put(tipplayer, acply);
 			}
 
-			String accIzqDef = accVsPly.get("DEF").getIzqQA1();
-			accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));
+			try {
+				String accIzqDef = (accVsPly.get("DEF").getIzqQA1() != null
+						&& accVsPly.get("DEF").getIzqQA1().isEmpty()) ? accVsPly.get("DEF").getIzqQA3()
+								: accVsPly.get("DEF").getIzqQA1();
+
+				accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));
+			} catch (Exception e) {
+			}
 		}
 		if (handInfoDto.numJugadores() == 3 && poshero == "BB") {
 			accionInfoDto.setIzqVsEffStack(stackEff[2]);
@@ -249,13 +259,20 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 				accVsPly.put(tipplayer, acply);
 			}
 
-			String accIzqDef = accVsPly.get("DEF").getIzqQA1();
-			String accDerDef = accVsPly.get("DEF").getDerQA1();
+			try {
+				String accIzqDef = (accVsPly.get("DEF").getIzqQA1() != null
+						&& accVsPly.get("DEF").getIzqQA1().isEmpty()) ? accVsPly.get("DEF").getIzqQA3()
+								: accVsPly.get("DEF").getIzqQA1();
+				String accDerDef = (accVsPly.get("DEF").getDerQA1() != null
+						&& accVsPly.get("DEF").getDerQA1().isEmpty()) ? accVsPly.get("DEF").getDerQA3()
+								: accVsPly.get("DEF").getDerQA1();
 
-			if (handInfoDto.getIsActivo()[0]) {
-				accionInfoDto.setDefAccion(accDerDef.substring(0, 1));
-			} else {
-				accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));
+				if (handInfoDto.getIsActivo()[0]) {
+					accionInfoDto.setDefAccion(accDerDef.substring(0, 1));
+				} else {
+					accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));
+				}
+			} catch (Exception e) {
 			}
 		}
 
@@ -287,14 +304,22 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 				accVsPly.put(tipplayer, acply);
 			}
 
-			String accIzqDef = accVsPly.get("DEF").getIzqQA1();
-			String accDerDef = accVsPly.get("DEF").getDerQA1();
-
-			if (handInfoDto.getIsActivo()[0]) {
-				accionInfoDto.setDefAccion(accDerDef.substring(0, 1));
-			} else {
-				accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));
-			}
+//			try {
+//				String accIzqDef = (accVsPly.get("DEF").getIzqQA1() != null
+//						&& accVsPly.get("DEF").getIzqQA1().isEmpty()) ? accVsPly.get("DEF").getIzqQA3()
+//								: accVsPly.get("DEF").getIzqQA1();
+//				String accDerDef = (accVsPly.get("DEF").getDerQA1() != null
+//						&& accVsPly.get("DEF").getDerQA1().isEmpty()) ? accVsPly.get("DEF").getDerQA3()
+//								: accVsPly.get("DEF").getDerQA1();
+//
+//				if (handInfoDto.getIsActivo()[0]) {
+//					accionInfoDto.setDefAccion(accDerDef.substring(0, 1));
+//				} else {
+//					accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));
+//				}
+//
+//			} catch (Exception e) {
+//			}
 		}
 
 		accionInfoDto.setAccionVsPlayer(accVsPly);
