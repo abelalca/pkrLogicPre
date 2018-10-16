@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -13,11 +12,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import com.abp.pkr.pkrLogicPre.dao.RangeSttgyRepository3WayI;
 import com.abp.pkr.pkrLogicPre.dao.RangeSttgyRepositoryI;
 import com.abp.pkr.pkrLogicPre.db.TbRangeSttgy;
+import com.abp.pkr.pkrLogicPre.db.TbRangeSttgy3Way;
 import com.abp.pkr.pkrLogicPre.dto.AccionInfoDto;
 import com.abp.pkr.pkrLogicPre.dto.AccionVsPlayer;
 import com.abp.pkr.pkrLogicPre.dto.HandInfoDto;
+import com.abp.pkr.pkrLogicPre.dto.RangeTransform;
 
 import ch.qos.logback.classic.Logger;
 
@@ -28,6 +30,12 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 
 	@Autowired
 	RangeSttgyRepositoryI repositorio;
+
+	@Autowired
+	RangeSttgyRepository3WayI repositorio3way;
+
+	@Autowired
+	RangeTransform rangeTransform;
 
 	/**
 	 * Metodo que procesa una mano para asesorar como jugar a HERO,
@@ -56,25 +64,93 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 		int i = 0;
 		for (Double stack : stackEff) {
 			if (stack > 0) {
-				List<TbRangeSttgy> rangos = repositorio
-						.findByNbSttgyNumjugAndVrAutUsuarioAndVrSttgyStrategyAndVrSttgyPosheroAndVrSttgyVsPlayerAndVrSttgyRangeContainingAndNbSttgyStackminLessThanAndNbSttgyStackmaxGreaterThanEqual(
+				List<TbRangeSttgy> rangosCons = repositorio
+						.findByNbSttgyNumjugAndVrAutUsuarioAndVrSttgyStrategyAndVrSttgyPosheroAndVrSttgyVsPlayerAndNbSttgyStackminLessThanAndNbSttgyStackmaxGreaterThanEqual(
 								handInfoDto.getNumjug(), handInfoDto.getUsuario(), handInfoDto.getEstrategia(),
-								handInfoDto.getPosicionHero(), vsPlayers[i], mano, stack, stack);
+								handInfoDto.getPosicionHero(), vsPlayers[i], stack, stack);
 				// hashmap que tiene como clave la posicion del vsPlayer y los rangos a jugar
 				// contra el
+
+				// buscamos el rango que contenga la mano nuestra
+				boolean estaEnRango = false;
+				List<TbRangeSttgy> rangos = new ArrayList<>();
+				for (TbRangeSttgy ran : rangosCons) {
+					estaEnRango = rangeTransform.isHandInRange(ran.getVrSttgyRange(), mano);
+					if (estaEnRango) {
+						rangos.add(ran);
+					}
+				}
+
 				acciones.put(vsPlayers[i], rangos);
 			}
 			i++;
 		}
+
 		log.debug("Obteniendo acciones a jugar, numero acciones consultadas: " + acciones.size());
 
 		AccionInfoDto accionInfoDto = obtenerAcciones(handInfoDto, stackEff, acciones);
 		log.debug("Retornando Objeto de Acciones");
 
+		// calculamos las acciones 3way es decir cuando los dos jugadores se involucran
+		// en la mano
+
+		if (handInfoDto.numJugadores() == 3 && handInfoDto.getPosicionHero().equals("BB")) {
+			List<Double> lsStackEff = Arrays.asList(stackEff);
+			Double maxStackEff = Collections.max(lsStackEff);
+
+			List<TbRangeSttgy3Way> lsRangos3way = repositorio3way
+					.findByAndVrAutUsuarioAndVrSttgyStrategyAndNbSttgyStackminLessThanAndNbSttgyStackmaxGreaterThanEqual(
+							handInfoDto.getUsuario(), handInfoDto.getEstrategia(), maxStackEff, maxStackEff);
+
+			boolean estaEnRango=false;
+			List<TbRangeSttgy3Way> rangos = new ArrayList<>();
+			for (TbRangeSttgy3Way ran : lsRangos3way) {
+				estaEnRango = rangeTransform.isHandInRange(ran.getVrSttgyRange(), mano);
+				if (estaEnRango) {
+					rangos.add(ran);
+				}				
+			}
+			accionInfoDto.setEff3WayStack(maxStackEff);
+			
+			obtenerAcciones3Way(accionInfoDto, rangos);
+		}
+		
+
 		return accionInfoDto;
 	}
 
-	private String ordenarHand(String hand) {
+
+
+	private void obtenerAcciones3Way(AccionInfoDto accionInfoDto, List<TbRangeSttgy3Way> rangos) {
+		
+		for (TbRangeSttgy3Way ran : rangos) {
+			
+			if (ran.getVrSttgyTipoaccion().equals("LL")) {
+				accionInfoDto.setLL(ran.getVrSttgyAccion());
+			}
+			if (ran.getVrSttgyTipoaccion().equals("LR")) {
+				accionInfoDto.setLR(ran.getVrSttgyAccion());
+			}
+			if (ran.getVrSttgyTipoaccion().equals("LS")) {
+				accionInfoDto.setLS(ran.getVrSttgyAccion());
+			}
+			if (ran.getVrSttgyTipoaccion().equals("RC")) {
+				accionInfoDto.setRC(ran.getVrSttgyAccion());
+			}
+			if (ran.getVrSttgyTipoaccion().equals("RS")) {
+				accionInfoDto.setRS(ran.getVrSttgyAccion());
+			}
+			if (ran.getVrSttgyTipoaccion().equals("SS")) {
+				accionInfoDto.setSS(ran.getVrSttgyAccion());
+			}
+			
+		}
+		
+	}
+
+
+
+	public String ordenarHand(String hand) {
 		String carta1 = hand.substring(0, 1);
 		String carta2 = hand.substring(2, 3);
 		String palo1 = hand.substring(1, 2);
@@ -304,22 +380,24 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 				accVsPly.put(tipplayer, acply);
 			}
 
-//			try {
-//				String accIzqDef = (accVsPly.get("DEF").getIzqQA1() != null
-//						&& accVsPly.get("DEF").getIzqQA1().isEmpty()) ? accVsPly.get("DEF").getIzqQA3()
-//								: accVsPly.get("DEF").getIzqQA1();
-//				String accDerDef = (accVsPly.get("DEF").getDerQA1() != null
-//						&& accVsPly.get("DEF").getDerQA1().isEmpty()) ? accVsPly.get("DEF").getDerQA3()
-//								: accVsPly.get("DEF").getDerQA1();
-//
-//				if (handInfoDto.getIsActivo()[0]) {
-//					accionInfoDto.setDefAccion(accDerDef.substring(0, 1));
-//				} else {
-//					accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));
-//				}
-//
-//			} catch (Exception e) {
-//			}
+			// try {
+			// String accIzqDef = (accVsPly.get("DEF").getIzqQA1() != null
+			// && accVsPly.get("DEF").getIzqQA1().isEmpty()) ?
+			// accVsPly.get("DEF").getIzqQA3()
+			// : accVsPly.get("DEF").getIzqQA1();
+			// String accDerDef = (accVsPly.get("DEF").getDerQA1() != null
+			// && accVsPly.get("DEF").getDerQA1().isEmpty()) ?
+			// accVsPly.get("DEF").getDerQA3()
+			// : accVsPly.get("DEF").getDerQA1();
+			//
+			// if (handInfoDto.getIsActivo()[0]) {
+			// accionInfoDto.setDefAccion(accDerDef.substring(0, 1));
+			// } else {
+			// accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));
+			// }
+			//
+			// } catch (Exception e) {
+			// }
 		}
 
 		accionInfoDto.setAccionVsPlayer(accVsPly);

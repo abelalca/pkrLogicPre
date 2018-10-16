@@ -14,7 +14,7 @@ public interface RangeSttgyRepositoryI extends CrudRepository<TbRangeSttgy, Long
 	
 	List<TbRangeSttgy> findByNbSttgyNumjugAndVrAutUsuarioAndVrSttgyStrategyAndVrSttgyPosheroAndVrSttgyVsPlayerAndVrSttgyRangeContainingAndNbSttgyStackminLessThanAndNbSttgyStackmaxGreaterThanEqual(Integer NbSttgyNumjug, String vrAutUsuario, String vrSttgyStrategy, String vrSttgyPoshero, String vrSttgyVsPlayer, String hand, Double NbSttgyStackmin, Double NbSttgyStackmax);
 //	
-//	List<TbRangeSttgy> obtenerRango(Integer numjug, String poshero, Double stack);
+	List<TbRangeSttgy> findByNbSttgyNumjugAndVrAutUsuarioAndVrSttgyStrategyAndVrSttgyPosheroAndVrSttgyVsPlayerAndNbSttgyStackminLessThanAndNbSttgyStackmaxGreaterThanEqual(Integer NbSttgyNumjug, String vrAutUsuario, String vrSttgyStrategy, String vrSttgyPoshero, String vrSttgyVsPlayer, Double NbSttgyStackmin, Double NbSttgyStackmax);
 	
 
 }

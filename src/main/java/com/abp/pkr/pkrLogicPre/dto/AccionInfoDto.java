@@ -14,6 +14,15 @@ public class AccionInfoDto {
 	private String derVsPlayer;
 	private Double izqVsEffStack;
 	private Double derVsEffStack;
+	private String mesaNombre;
+
+	private Double eff3WayStack;
+	private String LL;
+	private String LR;
+	private String LS;
+	private String RC;
+	private String RS;
+	private String SS;
 
 	private Map<String, AccionVsPlayer> accionVsPlayer;
 
@@ -95,6 +104,70 @@ public class AccionInfoDto {
 
 	public void setDefAccion(String defAccion) {
 		this.defAccion = defAccion;
+	}
+
+	public String getMesaNombre() {
+		return mesaNombre;
+	}
+
+	public void setMesaNombre(String mesaNombre) {
+		this.mesaNombre = mesaNombre;
+	}
+
+	public Double getEff3WayStack() {
+		return eff3WayStack;
+	}
+
+	public void setEff3WayStack(Double eff3WayStack) {
+		this.eff3WayStack = eff3WayStack;
+	}
+
+	public String getLL() {
+		return LL;
+	}
+
+	public void setLL(String lL) {
+		LL = lL;
+	}
+
+	public String getLR() {
+		return LR;
+	}
+
+	public void setLR(String lR) {
+		LR = lR;
+	}
+
+	public String getLS() {
+		return LS;
+	}
+
+	public void setLS(String lS) {
+		LS = lS;
+	}
+
+	public String getRC() {
+		return RC;
+	}
+
+	public void setRC(String rC) {
+		RC = rC;
+	}
+
+	public String getRS() {
+		return RS;
+	}
+
+	public void setRS(String rS) {
+		RS = rS;
+	}
+
+	public String getSS() {
+		return SS;
+	}
+
+	public void setSS(String sS) {
+		SS = sS;
 	}
 
 }
