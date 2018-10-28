@@ -37,6 +37,9 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 	@Autowired
 	RangeTransform rangeTransform;
 
+	protected static List<HandInfoDto> bufferManosAnalizadas = new ArrayList<>();
+	protected static List<AccionInfoDto> bufferAccionesAnalizadas = new ArrayList<>();
+
 	/**
 	 * Metodo que procesa una mano para asesorar como jugar a HERO,
 	 * 
@@ -48,6 +51,18 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 	@Override
 	public AccionInfoDto procesarHand(HandInfoDto handInfoDto) throws Exception {
 
+		// almacenar mano leida para no procesarla dos veces
+		AccionInfoDto accionLectura = almacenarLectura(handInfoDto);
+
+		// si la mano ya fue analizada anteriormente, retorno el resultado de ese
+		// analisis
+		if (accionLectura != null) {
+			log.debug("Mano actual ya ha sido analizada anteriormente: {} ", accionLectura.getHand());
+			return accionLectura;
+		} else {
+			log.debug("Mano actual NO ha sido procesada anteriormente : {}", handInfoDto.getHand());
+		}
+
 		// obtener stacks efectivos - la posicion con valor 0 es la de hero
 		Double[] stackEff = handInfoDto.obtenerStackEff();
 		log.debug("Obteniendo stacks efectivos: " + Arrays.toString(stackEff));
@@ -57,6 +72,11 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 		log.debug("Obteniendo posicion jugadores: " + Arrays.toString(vsPlayers));
 
 		String mano = ordenarHand(handInfoDto.getHand());
+		log.debug("Ordenando mano. Antes {} , Despues {} ", handInfoDto.getHand(), mano);
+
+		// generamos numero aleatorio para estrategias mixtas
+		int random = (int) Math.round(Math.random() * 100);
+		log.debug("generando numero aleatorio para analizar mano {}", random);
 
 		// consultamos rangos a jugar y armamos el Map que contiene los rangos a jugar
 		// vs el rival
@@ -70,13 +90,15 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 								handInfoDto.getPosicionHero(), vsPlayers[i], stack, stack);
 				// hashmap que tiene como clave la posicion del vsPlayer y los rangos a jugar
 				// contra el
-
 				// buscamos el rango que contenga la mano nuestra
 				boolean estaEnRango = false;
 				List<TbRangeSttgy> rangos = new ArrayList<>();
 				for (TbRangeSttgy ran : rangosCons) {
-					estaEnRango = rangeTransform.isHandInRange(ran.getVrSttgyRange(), mano);
+					estaEnRango = rangeTransform.isHandInRange(ran.getVrSttgyRange(), mano, random);
 					if (estaEnRango) {
+						log.debug(
+								"Consultando base de datos. La mano {} se encuentra en el rango 2way: {} , con la accion {}",
+								mano, ran.getVrSttgyRange(), ran.getVrSttgyAccion());
 						rangos.add(ran);
 					}
 				}
@@ -89,11 +111,16 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 		log.debug("Obteniendo acciones a jugar, numero acciones consultadas: " + acciones.size());
 
 		AccionInfoDto accionInfoDto = obtenerAcciones(handInfoDto, stackEff, acciones);
-		log.debug("Retornando Objeto de Acciones");
+		log.debug("Retornando Objeto de Acciones para la mano {}", mano);
+
+		if (accionInfoDto == null) {
+			log.error("No se encontraron acciones para la mano {}", mano);
+			throw new Exception("No se encontraron acciones para la mano " + mano);
+		}
 
 		// calculamos las acciones 3way es decir cuando los dos jugadores se involucran
 		// en la mano
-
+		log.debug("Encontrando acciones 3Way");
 		if (handInfoDto.numJugadores() == 3 && handInfoDto.getPosicionHero().equals("BB")) {
 			List<Double> lsStackEff = Arrays.asList(stackEff);
 			Double maxStackEff = Collections.max(lsStackEff);
@@ -102,29 +129,32 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 					.findByAndVrAutUsuarioAndVrSttgyStrategyAndNbSttgyStackminLessThanAndNbSttgyStackmaxGreaterThanEqual(
 							handInfoDto.getUsuario(), handInfoDto.getEstrategia(), maxStackEff, maxStackEff);
 
-			boolean estaEnRango=false;
+			boolean estaEnRango = false;
 			List<TbRangeSttgy3Way> rangos = new ArrayList<>();
 			for (TbRangeSttgy3Way ran : lsRangos3way) {
-				estaEnRango = rangeTransform.isHandInRange(ran.getVrSttgyRange(), mano);
+				estaEnRango = rangeTransform.isHandInRange(ran.getVrSttgyRange(), mano, 100);
 				if (estaEnRango) {
+					log.debug("La mano {} esta en el rango 3way {} con la accion {}", mano, ran.getVrSttgyRange(),
+							ran.getVrSttgyAccion());
 					rangos.add(ran);
-				}				
+				}
 			}
 			accionInfoDto.setEff3WayStack(maxStackEff);
-			
+
 			obtenerAcciones3Way(accionInfoDto, rangos);
 		}
-		
+
+		// guardamos la mano analizada en el buffer de manos
+		bufferAccionesAnalizadas.add(accionInfoDto);
+		bufferManosAnalizadas.add(handInfoDto);
 
 		return accionInfoDto;
 	}
 
-
-
 	private void obtenerAcciones3Way(AccionInfoDto accionInfoDto, List<TbRangeSttgy3Way> rangos) {
-		
+
 		for (TbRangeSttgy3Way ran : rangos) {
-			
+
 			if (ran.getVrSttgyTipoaccion().equals("LL")) {
 				accionInfoDto.setLL(ran.getVrSttgyAccion());
 			}
@@ -143,12 +173,10 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 			if (ran.getVrSttgyTipoaccion().equals("SS")) {
 				accionInfoDto.setSS(ran.getVrSttgyAccion());
 			}
-			
+
 		}
-		
+
 	}
-
-
 
 	public String ordenarHand(String hand) {
 		String carta1 = hand.substring(0, 1);
@@ -198,6 +226,7 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 		int heroposArr = Arrays.asList(stackEff).indexOf((double) 0);
 
 		if (heroposArr < 0) {
+			log.debug("Posicion de Hero en el Array no identificada");
 			throw new Exception("Posicion de Hero en el Array no identificada");
 		}
 
@@ -205,12 +234,16 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 
 		Map<String, AccionVsPlayer> accVsPly = new HashMap<>();
 		String[] tiposPly = obtenerDisctinctTipoPlayers(acciones);
+		log.debug("Tipos diferentes de jugadores {}", Arrays.toString(tiposPly));
 
 		// es porque no trajo ninguna accion
 		if (tiposPly.length == 0) {
 			accionInfoDto.setDefAccion("F");
 			return accionInfoDto;
 		}
+
+		log.debug("Obteniendo acciones para la situacion, numero jugadores {} , posHero {}, hand {} ",
+				handInfoDto.numJugadores(), poshero, handInfoDto.getHand());
 
 		if (handInfoDto.numJugadores() == 3 && poshero == "BU") {
 			accionInfoDto.setIzqVsEffStack(stackEff[2]);
@@ -380,24 +413,6 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 				accVsPly.put(tipplayer, acply);
 			}
 
-			// try {
-			// String accIzqDef = (accVsPly.get("DEF").getIzqQA1() != null
-			// && accVsPly.get("DEF").getIzqQA1().isEmpty()) ?
-			// accVsPly.get("DEF").getIzqQA3()
-			// : accVsPly.get("DEF").getIzqQA1();
-			// String accDerDef = (accVsPly.get("DEF").getDerQA1() != null
-			// && accVsPly.get("DEF").getDerQA1().isEmpty()) ?
-			// accVsPly.get("DEF").getDerQA3()
-			// : accVsPly.get("DEF").getDerQA1();
-			//
-			// if (handInfoDto.getIsActivo()[0]) {
-			// accionInfoDto.setDefAccion(accDerDef.substring(0, 1));
-			// } else {
-			// accionInfoDto.setDefAccion(accIzqDef.substring(0, 1));
-			// }
-			//
-			// } catch (Exception e) {
-			// }
 		}
 
 		accionInfoDto.setAccionVsPlayer(accVsPly);
@@ -482,6 +497,42 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 		}
 
 		return vsPlayers;
+
+	}
+
+	/**
+	 * almacena en memoria los ultimos 16 hands analizadas para no volverlas a
+	 * analizar nuevamente
+	 * 
+	 * @param bufferManos
+	 * @param handInfoDto
+	 * @return
+	 * @throws Exception
+	 */
+	private AccionInfoDto almacenarLectura(HandInfoDto handInfoDto) throws Exception {
+
+		// si la mano esta en el buffer de manos quiere dicir que ya fue analizada y
+		// retorno la accion analizada
+		for (int i = 0; i < bufferManosAnalizadas.size(); i++) {
+			HandInfoDto h = bufferManosAnalizadas.get(i);
+			try {
+				boolean isIgual = HandInfoDto.equalsHand(handInfoDto, h);
+				if (isIgual) {
+					return bufferAccionesAnalizadas.get(i);
+				}
+			} catch (Exception e) {
+				log.error("error al tratar de identificar si la mano ha sido analizada previamente");
+				throw new Exception("error al tratar de identificar si la mano ha sido analizada previamente");
+			}
+		}
+
+		// borramos la primera imagen del buffer
+		if (bufferManosAnalizadas.size() > 16) {
+			bufferManosAnalizadas.remove(0);
+			bufferAccionesAnalizadas.remove(0);
+		}
+
+		return null;
 
 	}
 

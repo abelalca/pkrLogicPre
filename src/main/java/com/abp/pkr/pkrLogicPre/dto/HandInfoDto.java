@@ -1,12 +1,15 @@
 package com.abp.pkr.pkrLogicPre.dto;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
 
 public class HandInfoDto {
+	
+	private static final Logger log = (Logger) LoggerFactory.getLogger(HandInfoDto.class);
 
 	private Integer btnPos;
 	// que tan alejado esta hero de la BB, BB=0, BU=2
@@ -220,6 +223,18 @@ public class HandInfoDto {
 
 		return stackEff;
 
+	}
+
+	public static boolean equalsHand(HandInfoDto mano1, HandInfoDto mano2) {
+		String mano1Info = mano1.getHand() + mano1.getPosicionHero() + mano1.getNumjug() + Arrays.toString(mano1.getStacksBb());
+		String mano2Info = mano2.getHand() + mano2.getPosicionHero() + mano2.getNumjug() + Arrays.toString(mano2.getStacksBb());
+//		log.debug("......comparacion manos >> mano1: {} , mano2: {}", mano1Info, mano2Info);
+
+		if (mano1Info.equals(mano2Info)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

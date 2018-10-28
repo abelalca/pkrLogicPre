@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,7 +18,7 @@ public class RangeTransform {
 
 	@Autowired
 	ProcesarHandNgcImpl procesarHandNgcImpl;
-//	ProcesarHandNgcImpl procesarHandNgcImpl = new ProcesarHandNgcImpl();
+	// ProcesarHandNgcImpl procesarHandNgcImpl = new ProcesarHandNgcImpl();
 
 	private Map<String, Integer> mapaCartas = null;
 
@@ -40,95 +42,136 @@ public class RangeTransform {
 	public String transformRangeToAllCards(String range) {
 		return null;
 	}
-//	
-//	public static void main(String... args) {
-//		RangeTransform ran = new RangeTransform();
-////		JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o
-//		boolean b= false;
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "AdAs");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "4d4s");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "8d8s");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "JdJs");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "KdKs");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "As6s");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "Kd7s");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "Ad4d");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "Kd9s");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "Jd7d");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "6d5s");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "As8d");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "AsKd");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "Ts6s");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "Ts5s");
-//		System.out.println(b);
-//		
-//		
-//
-//		
-//		System.out.println("--------");
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "9d9s");
-//		System.out.println(b);
-//	
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "As7s");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "KsTs");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "As7d");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "As7s");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "KsJd");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "Ks6d");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "Js6d");
-//		System.out.println(b);
-//		
-//		b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "2s2d");
-//		System.out.println(b);
-//		
-//		
-//		
-//	}
-//
-//	
-	
-	public boolean isHandInRange(String range, String mano) {
-//		String mano = procesarHandNgcImpl.ordenarHand(hand);
+
+	// public static void main(String... args) {
+	// RangeTransform ran = new RangeTransform();
+	//// JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+, KTo-K7o, J7o+, 98o,
+	// 87o, 76o, 65o, 54o
+	// boolean b= false;
+	// int random = 50;
+	//
+	//
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "AA",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("88 [40/60], 99 [50/60], AKo[40/50]", "AKo",random);
+	// System.out.println(b);
+	// b =ran.isHandInRange("88 [40/90],", "88",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "44",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "88",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "JJ",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "KK",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "A6s",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "K7o",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "A4s",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "K9o",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "J7s",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "65o",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "A8o",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "AKo",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "T6s",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "T5s",random);
+	// System.out.println(b);
+	//
+	//
+	//
+	//
+	// System.out.println("--------");
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "99",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "A7s",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "KTs",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "A7o",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "A7s",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "KJo",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "K6o",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "J6o",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ+, 88, 66-33, A6s-A2s, K9s, Q8s, J7s, T5s+, A8o+,
+	// KTo-K7o, J7o+, 98o, 87o, 76o, 65o, 54o", "22",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("88 [50/60],", "88",random);
+	// System.out.println(b);
+	// b =ran.isHandInRange("88 [60/90],", "88",random);
+	// System.out.println(b);
+	// b =ran.isHandInRange("88 [40/60], 99 [50/60], AKo [40/50]", "99",random);
+	// System.out.println(b);
+	// b =ran.isHandInRange("88 [40/60], 99 [50/60], AKo [40/50]", "87o",random);
+	// System.out.println(b);
+	//
+	// b =ran.isHandInRange("JJ-22, A2s+, A2o+, KTs+, KJo+, QJs", "JTo", random);
+	// System.out.println(b);
+	//
+	// }
+
+	public boolean isHandInRange(String range, String mano, int random) {
 
 		String[] splitRange = range.split(",");
 		boolean isInRange = false;
@@ -139,6 +182,19 @@ public class RangeTransform {
 
 		for (String ran : splitRange) {
 			if (ran.contains(mano)) {
+				Matcher m = Pattern.compile("\\[(.*?)\\]").matcher(ran);
+				while (m.find()) {
+					String[] probs = m.group(1).split("/");
+					if (random > Integer.valueOf(probs[0].trim()) && random <= Integer.valueOf(probs[1].trim())) {
+						return true;
+					} else {
+						if (random == 0 && Integer.valueOf(probs[0].trim()) == 0) {
+							return true;
+						}
+						return false;
+					}
+				}
+
 				isInRange = true;
 				return isInRange;
 			}
@@ -151,7 +207,7 @@ public class RangeTransform {
 					cartas.add(ran.substring(2, 3));
 				}
 
-				if ( cartas.get(0).equals(mano.substring(0, 1))) {
+				if (cartas.get(0).equals(mano.substring(0, 1))) {
 					Integer limiteInf = Integer.valueOf(mapaCartas.get(cartas.get(1)));
 					Integer limiteSup = Integer.valueOf(mapaCartas.get(cartas.get(0))) - 1;
 					Integer carta2 = Integer.valueOf(mapaCartas.get(mano.substring(1, 2)));
@@ -167,8 +223,8 @@ public class RangeTransform {
 						}
 					}
 				}
-				
-				if (ran.length()==3 && mano.substring(0,1).equals(mano.substring(1,2))) {
+
+				if (ran.length() == 3 && mano.substring(0, 1).equals(mano.substring(1, 2))) {
 					cartas.add(ran.substring(0, 1));
 					cartas.add(ran.substring(1, 2));
 					Integer limiteInf = Integer.valueOf(mapaCartas.get(cartas.get(1)));
@@ -176,15 +232,16 @@ public class RangeTransform {
 					Integer carta2 = Integer.valueOf(mapaCartas.get(mano.substring(1, 2)));
 					if (limiteInf <= carta2 && limiteSup >= carta2) {
 						isInRange = true;
-						return isInRange;						
+						return isInRange;
 					}
-					
+
 				}
 
 			}
 
 			if (ran.contains("-")) {
-				if ( mano.substring(0, 1).equals(ran.substring(0, 1)) || (ran.length()==5 && mano.substring(0,1).equals(mano.substring(1,2)))) {
+				if ((mano.substring(0, 1).equals(ran.substring(0, 1)) && ran.length() == 7)
+						|| (ran.length() == 5 && mano.substring(0, 1).equals(mano.substring(1, 2)))) {
 					List<String> cartas = new ArrayList<>();
 					if (ran.length() == 5) {
 						cartas.add(ran.substring(1, 2));
