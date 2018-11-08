@@ -33,7 +33,7 @@ public class TbRangeSttgy3Way {
 	@Column(name = "vr_aut_usuario")
 	private String vrAutUsuario;
 
-	@Column(name = "dt_aut_fechareg")
+	@Column(columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP", name = "dt_aut_fechareg")
 	private Date dtAutFechareg;
 
 	@Column(name = "vr_sttgy_accion")
