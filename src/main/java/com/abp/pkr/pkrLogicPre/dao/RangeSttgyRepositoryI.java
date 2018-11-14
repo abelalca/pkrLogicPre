@@ -12,9 +12,9 @@ import com.abp.pkr.pkrLogicPre.db.TbRangeSttgy;
 public interface RangeSttgyRepositoryI extends CrudRepository<TbRangeSttgy, Long> {
 	
 	
-	List<TbRangeSttgy> findByNbSttgyNumjugAndVrAutUsuarioAndVrSttgyStrategyAndVrSttgyPosheroAndVrSttgyVsPlayerAndVrSttgyRangeContainingAndNbSttgyStackminLessThanAndNbSttgyStackmaxGreaterThanEqual(Integer NbSttgyNumjug, String vrAutUsuario, String vrSttgyStrategy, String vrSttgyPoshero, String vrSttgyVsPlayer, String hand, Double NbSttgyStackmin, Double NbSttgyStackmax);
+	List<TbRangeSttgy> findByNbSttgyNumjugAndVrAutUsuarioAndVrSttgyStrategyAndVrSttgyPosheroAndVrSttgyVsPlayerAndVrSttgyRangeContainingAndNbSttgyStackminLessThanEqualAndNbSttgyStackmaxGreaterThan(Integer NbSttgyNumjug, String vrAutUsuario, String vrSttgyStrategy, String vrSttgyPoshero, String vrSttgyVsPlayer, String hand, Double NbSttgyStackmin, Double NbSttgyStackmax);
 //	
-	List<TbRangeSttgy> findByNbSttgyNumjugAndVrAutUsuarioAndVrSttgyStrategyAndVrSttgyPosheroAndVrSttgyVsPlayerAndNbSttgyStackminLessThanAndNbSttgyStackmaxGreaterThanEqual(Integer NbSttgyNumjug, String vrAutUsuario, String vrSttgyStrategy, String vrSttgyPoshero, String vrSttgyVsPlayer, Double NbSttgyStackmin, Double NbSttgyStackmax);
+	List<TbRangeSttgy> findByNbSttgyNumjugAndVrAutUsuarioAndVrSttgyStrategyAndVrSttgyPosheroAndVrSttgyVsPlayerAndNbSttgyStackminLessThanEqualAndNbSttgyStackmaxGreaterThan(Integer NbSttgyNumjug, String vrAutUsuario, String vrSttgyStrategy, String vrSttgyPoshero, String vrSttgyVsPlayer, Double NbSttgyStackmin, Double NbSttgyStackmax);
 	
 
 }

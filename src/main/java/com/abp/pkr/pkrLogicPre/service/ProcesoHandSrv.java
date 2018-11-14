@@ -1,6 +1,7 @@
 package com.abp.pkr.pkrLogicPre.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,13 @@ public class ProcesoHandSrv {
 	@PostMapping(value="/procesarHand")
 	public AccionInfoDto procesarHand(@RequestBody HandInfoDto handInfoDto) throws Exception{
 		return procesarHandNgc.procesarHand(handInfoDto);		
+	}	
+	
+	
+	@GetMapping(value="/borrarCache")
+	public String borrarCache() throws Exception{
+		procesarHandNgc.borrarCache();	
+		return "OK";
 	}	
 	
 }

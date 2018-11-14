@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,36 +83,42 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 		// consultamos rangos a jugar y armamos el Map que contiene los rangos a jugar
 		// vs el rival
 		Map<String, List<TbRangeSttgy>> acciones = new HashMap<>();
+		Map<String, List<TbRangeSttgy>> accionesMix = new HashMap<>();
 		int i = 0;
 		for (Double stack : stackEff) {
 			if (stack > 0) {
 				List<TbRangeSttgy> rangosCons = repositorio
-						.findByNbSttgyNumjugAndVrAutUsuarioAndVrSttgyStrategyAndVrSttgyPosheroAndVrSttgyVsPlayerAndNbSttgyStackminLessThanAndNbSttgyStackmaxGreaterThanEqual(
+						.findByNbSttgyNumjugAndVrAutUsuarioAndVrSttgyStrategyAndVrSttgyPosheroAndVrSttgyVsPlayerAndNbSttgyStackminLessThanEqualAndNbSttgyStackmaxGreaterThan(
 								handInfoDto.getNumjug(), handInfoDto.getUsuario(), handInfoDto.getEstrategia(),
 								handInfoDto.getPosicionHero(), vsPlayers[i], stack, stack);
 				// hashmap que tiene como clave la posicion del vsPlayer y los rangos a jugar
 				// contra el
 				// buscamos el rango que contenga la mano nuestra
-				boolean estaEnRango = false;
+				int estaEnRango = -1;
 				List<TbRangeSttgy> rangos = new ArrayList<>();
+				List<TbRangeSttgy> rangosMix = new ArrayList<>();
 				for (TbRangeSttgy ran : rangosCons) {
 					estaEnRango = rangeTransform.isHandInRange(ran.getVrSttgyRange(), mano, random);
-					if (estaEnRango) {
+					if (estaEnRango == 1) {
 						log.debug(
 								"Consultando base de datos. La mano {} se encuentra en el rango 2way: {} , con la accion {}",
 								mano, ran.getVrSttgyRange(), ran.getVrSttgyAccion());
 						rangos.add(ran);
 					}
+					if (estaEnRango == 0) {
+						rangosMix.add(ran);
+					}
 				}
 
 				acciones.put(vsPlayers[i], rangos);
+				accionesMix.put(vsPlayers[i], rangosMix);
 			}
 			i++;
 		}
 
 		log.debug("Obteniendo acciones a jugar, numero acciones consultadas: " + acciones.size());
 
-		AccionInfoDto accionInfoDto = obtenerAcciones(handInfoDto, stackEff, acciones);
+		AccionInfoDto accionInfoDto = obtenerAcciones(handInfoDto, stackEff, acciones, accionesMix);
 		log.debug("Retornando Objeto de Acciones para la mano {}", mano);
 
 		if (accionInfoDto == null) {
@@ -129,11 +137,11 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 					.findByAndVrAutUsuarioAndVrSttgyStrategyAndNbSttgyStackminLessThanAndNbSttgyStackmaxGreaterThanEqual(
 							handInfoDto.getUsuario(), handInfoDto.getEstrategia(), maxStackEff, maxStackEff);
 
-			boolean estaEnRango = false;
+			int estaEnRango = -1;
 			List<TbRangeSttgy3Way> rangos = new ArrayList<>();
 			for (TbRangeSttgy3Way ran : lsRangos3way) {
 				estaEnRango = rangeTransform.isHandInRange(ran.getVrSttgyRange(), mano, 100);
-				if (estaEnRango) {
+				if (estaEnRango == 1) {
 					log.debug("La mano {} esta en el rango 3way {} con la accion {}", mano, ran.getVrSttgyRange(),
 							ran.getVrSttgyAccion());
 					rangos.add(ran);
@@ -215,7 +223,7 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 	}
 
 	public AccionInfoDto obtenerAcciones(HandInfoDto handInfoDto, Double[] stackEff,
-			Map<String, List<TbRangeSttgy>> acciones) throws Exception {
+			Map<String, List<TbRangeSttgy>> acciones, Map<String, List<TbRangeSttgy>> accionesMix) throws Exception {
 		AccionInfoDto accionInfoDto = new AccionInfoDto();
 		accionInfoDto.setHand(handInfoDto.getHand());
 		accionInfoDto.setNumJug(handInfoDto.numJugadores() + "max");
@@ -252,8 +260,8 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 			accionInfoDto.setDerVsPlayer("BB");
 
 			for (String tipplayer : tiposPly) {
-				List<String> izq = obtenerAccionVsPlayer(acciones, tipplayer, "SB");
-				List<String> der = obtenerAccionVsPlayer(acciones, tipplayer, "BB");
+				List<String> izq = obtenerAccionVsPlayer(acciones, accionesMix, tipplayer, "SB");
+				List<String> der = obtenerAccionVsPlayer(acciones, accionesMix, tipplayer, "BB");
 
 				AccionVsPlayer acply = new AccionVsPlayer();
 				acply.setIzqQA1(izq.get(0));
@@ -292,8 +300,8 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 			accionInfoDto.setIzqVsPlayer("BB");
 
 			for (String tipplayer : tiposPly) {
-				List<String> der = obtenerAccionVsPlayer(acciones, tipplayer, "BU");
-				List<String> izq = obtenerAccionVsPlayer(acciones, tipplayer, "BB");
+				List<String> der = obtenerAccionVsPlayer(acciones, accionesMix, tipplayer, "BU");
+				List<String> izq = obtenerAccionVsPlayer(acciones, accionesMix, tipplayer, "BB");
 
 				AccionVsPlayer acply = new AccionVsPlayer();
 				acply.setIzqQA1(izq.get(0));
@@ -323,8 +331,8 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 			accionInfoDto.setDerVsPlayer("SB");
 
 			for (String tipplayer : tiposPly) {
-				List<String> izq = obtenerAccionVsPlayer(acciones, tipplayer, "BU");
-				List<String> der = obtenerAccionVsPlayer(acciones, tipplayer, "SB");
+				List<String> izq = obtenerAccionVsPlayer(acciones, accionesMix, tipplayer, "BU");
+				List<String> der = obtenerAccionVsPlayer(acciones, accionesMix, tipplayer, "SB");
 
 				AccionVsPlayer acply = new AccionVsPlayer();
 				acply.setIzqQA1(izq.get(0));
@@ -351,7 +359,7 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 			}
 
 			for (String tipplayer : tiposPly) {
-				List<String> lado = obtenerAccionVsPlayer(acciones, tipplayer, "BB");
+				List<String> lado = obtenerAccionVsPlayer(acciones, accionesMix, tipplayer, "BB");
 
 				AccionVsPlayer acply = new AccionVsPlayer();
 				if (handInfoDto.getIsActivo()[0]) {
@@ -396,7 +404,7 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 			}
 
 			for (String tipplayer : tiposPly) {
-				List<String> lado = obtenerAccionVsPlayer(acciones, tipplayer, "SB");
+				List<String> lado = obtenerAccionVsPlayer(acciones, accionesMix, tipplayer, "SB");
 
 				AccionVsPlayer acply = new AccionVsPlayer();
 				if (handInfoDto.getIsActivo()[0]) {
@@ -420,8 +428,8 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 		return accionInfoDto;
 	}
 
-	private List<String> obtenerAccionVsPlayer(Map<String, List<TbRangeSttgy>> acciones, String tipplayer,
-			String posi) {
+	private List<String> obtenerAccionVsPlayer(Map<String, List<TbRangeSttgy>> acciones,
+			Map<String, List<TbRangeSttgy>> accionesMix, String tipplayer, String posi) {
 		List<String> uoPF = new ArrayList<>();
 		List<TbRangeSttgy> accs = acciones.get(posi);
 
@@ -431,12 +439,67 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 		for (TbRangeSttgy range : accs) {
 			if (range.getVrSttgyTipoaccion().trim().equals("UO") && range.getVrSttgyTipjug().equals(tipplayer)) {
 				QA1 = QA1 + range.getVrSttgyAccion();
+				if (range.getVrSttgyRange().contains("[")) {
+					Matcher m = Pattern.compile("\\[(.*?)\\]").matcher(range.getVrSttgyRange());
+					while (m.find()) {
+						String[] probs = m.group(1).split("/");
+						int min = Integer.valueOf(probs[0].trim());
+						int max = Integer.valueOf(probs[1].trim());
+						QA1 = QA1 + " (" + (max - min) + ")";
+					}
+				}
 			}
 			if (range.getVrSttgyTipoaccion().trim().equals("L") && range.getVrSttgyTipjug().equals(tipplayer)) {
 				QA2 = QA2 + range.getVrSttgyAccion();
+				if (range.getVrSttgyRange().contains("[")) {
+					Matcher m = Pattern.compile("\\[(.*?)\\]").matcher(range.getVrSttgyRange());
+					while (m.find()) {
+						String[] probs = m.group(1).split("/");
+						int min = Integer.valueOf(probs[0].trim());
+						int max = Integer.valueOf(probs[1].trim());
+						QA2 = QA2 + " (" + (max - min) + ")";
+					}
+				}
 			}
 			if (range.getVrSttgyTipoaccion().trim().equals("S") && range.getVrSttgyTipjug().equals(tipplayer)) {
 				QA3 = QA3 + range.getVrSttgyAccion();
+				if (range.getVrSttgyRange().contains("[")) {
+					Matcher m = Pattern.compile("\\[(.*?)\\]").matcher(range.getVrSttgyRange());
+					while (m.find()) {
+						String[] probs = m.group(1).split("/");
+						int min = Integer.valueOf(probs[0].trim());
+						int max = Integer.valueOf(probs[1].trim());
+						QA3 = QA3 + " (" + (max - min) + ")";
+					}
+				}
+			}
+
+		}
+
+		String QA1mix = "";
+		String QA2mix = "";
+		String QA3mix = "";
+		if (accionesMix.size() > 0) {
+			List<TbRangeSttgy> accsMix = accionesMix.get(posi);
+			for (TbRangeSttgy range : accsMix) {
+				if (range.getVrSttgyTipoaccion().trim().equals("UO") && range.getVrSttgyTipjug().equals(tipplayer)) {
+					QA1mix = QA1mix + " | " + range.getVrSttgyAccion();
+				}
+				if (range.getVrSttgyTipoaccion().trim().equals("L") && range.getVrSttgyTipjug().equals(tipplayer)) {
+					QA2mix = QA2mix + " | " + range.getVrSttgyAccion();
+				}
+				if (range.getVrSttgyTipoaccion().trim().equals("S") && range.getVrSttgyTipjug().equals(tipplayer)) {
+					QA3mix = QA3mix + " | " + range.getVrSttgyAccion();
+				}
+			}
+			if (!QA1mix.isEmpty()) {
+				QA1 = QA1 + " >>> " + QA1mix;
+			}
+			if (!QA2mix.isEmpty()) {
+				QA2 = QA2 + " >>> " + QA2mix;
+			}
+			if (!QA3mix.isEmpty()) {
+				QA3 = QA3 + " >>> " + QA3mix;
 			}
 		}
 
@@ -534,6 +597,11 @@ public class ProcesarHandNgcImpl implements ProcesarHandNgc {
 
 		return null;
 
+	}
+
+	public void borrarCache() {
+		bufferManosAnalizadas = new ArrayList<>();
+		bufferAccionesAnalizadas = new ArrayList<>();		
 	}
 
 }

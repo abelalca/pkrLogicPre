@@ -171,10 +171,10 @@ public class RangeTransform {
 	//
 	// }
 
-	public boolean isHandInRange(String range, String mano, int random) {
+	public int isHandInRange(String range, String mano, int random) {
 
 		String[] splitRange = range.split(",");
-		boolean isInRange = false;
+		int isInRange = -1;
 
 		for (int i = 0; i < splitRange.length; i++) {
 			splitRange[i] = splitRange[i].trim();
@@ -186,16 +186,16 @@ public class RangeTransform {
 				while (m.find()) {
 					String[] probs = m.group(1).split("/");
 					if (random > Integer.valueOf(probs[0].trim()) && random <= Integer.valueOf(probs[1].trim())) {
-						return true;
+						return 1;
 					} else {
 						if (random == 0 && Integer.valueOf(probs[0].trim()) == 0) {
-							return true;
+							return 1;
 						}
-						return false;
+						return 0;
 					}
 				}
 
-				isInRange = true;
+				isInRange = 1;
 				return isInRange;
 			}
 
@@ -214,11 +214,11 @@ public class RangeTransform {
 
 					if (limiteInf <= carta2 && limiteSup >= carta2) {
 						if (mano.length() == 3 && mano.substring(2, 3).equals(cartas.get(2))) {
-							isInRange = true;
+							isInRange = 1;
 							return isInRange;
 						}
 						if (mano.length() == 2) {
-							isInRange = true;
+							isInRange = 1;
 							return isInRange;
 						}
 					}
@@ -231,7 +231,7 @@ public class RangeTransform {
 					Integer limiteSup = 13;
 					Integer carta2 = Integer.valueOf(mapaCartas.get(mano.substring(1, 2)));
 					if (limiteInf <= carta2 && limiteSup >= carta2) {
-						isInRange = true;
+						isInRange = 1;
 						return isInRange;
 					}
 
@@ -259,11 +259,11 @@ public class RangeTransform {
 
 					if (limiteInf <= carta2 && limiteSup >= carta2) {
 						if (cartas.size() == 3 && cartas.get(2).equals(mano.substring(2, 3))) {
-							isInRange = true;
+							isInRange = 1;
 							return isInRange;
 						}
 						if (cartas.size() == 2) {
-							isInRange = true;
+							isInRange = 1;
 							return isInRange;
 						}
 					}
