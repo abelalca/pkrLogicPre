@@ -8,13 +8,18 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import com.abp.pkr.pkrLogicPre.ngc.ProcesarHandNgcImpl;
 
+import ch.qos.logback.classic.Logger;
+
 @Controller
 public class RangeTransform {
+	
+	private static final Logger log = (Logger) LoggerFactory.getLogger(RangeTransform.class);
 
 	@Autowired
 	ProcesarHandNgcImpl procesarHandNgcImpl;
@@ -181,7 +186,7 @@ public class RangeTransform {
 		}
 
 		for (String ran : splitRange) {
-			if (ran.contains(mano)) {
+			if (ran.startsWith(mano)) {				
 				Matcher m = Pattern.compile("\\[(.*?)\\]").matcher(ran);
 				while (m.find()) {
 					String[] probs = m.group(1).split("/");
